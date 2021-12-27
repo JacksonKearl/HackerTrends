@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HackerTrends</title>
+</head>
+<style>
+  * { box-sizing: content-box; margin: 0; padding: 0; }
+  body { display: flex; height: 100vh; flex-direction: column; }
+  hr { width: 100%; }
+  #results { flex-grow: 1; background-color: wheat; display: flex; flex-direction: row; }
+  .bar { cursor: pointer; width: 50px; height: 0; }
+  .gap { width: 10px; }
+  .bar:hover { filter: saturate(150%); }
+  .c0 { background-color: burlywood; }
+  .c1 { background-color: cornflowerblue; }
+  .c2 { background-color: indianred; }
+  .c3 { background-color: mediumaquamarine; }
+  .c4 { background-color: saddlebrown; }
+</style>
+<body>
+  <div id="queryContainer">
+    Query: <input type="text" placeholder="strawman" id="query" />
+    (<span class="c0">comma</span>, <span class="c1">separated</span>, <span class="c2">values</span>, <span class="c3">are</span>, <span class="c4">color-coded</span>)
+    <br />
+    From: <input type="text" placeholder="2006" id="from" />
+    To: <input type="text" placeholder="2022" id="to" />
+    (<code>new Date($0)</code>)
+    <br />
+    Bucket: <input type="text" placeholder="90" id="bucket" /> (# days)
+    <br />
+    <input type="submit" id="send" onclick="submit()" />
+  </div>
+  <hr />
+  <div id="results"></div>
+  <hr />
+  <div id="about">Powered by Agolia's <a href="https://hn.algolia.com/api">Hacker News Search API</a>. View Source. Result counts different from the linked page? Use Alt+Click to see the raw API response. </div>
+</body>
+<script>
+  document.querySelectorAll('input[type="text"]').forEach(e => e.onkeyup = (e) => e.keyCode === 13 && submit())
+  const urlParams = new URL(window.location).searchParams
+  const results = document.getElementById('results')
+  const query = document.getElementById('query')
+  const from = document.getElementById('from')
+  const to = document.getElementById('to')
+  const bucket = document.getElementById('bucket')
+  query.value = urlParams.get('query')
+  from.value = urlParams.get('from')
+  to.value = urlParams.get('to')
+  bucket.value = urlParams.get('bucket')
+  const readElement = (element) => element.value || element.placeholder
+  const readDate = (element) => +new Date(readElement(element)) / 1000
+  const submit = () => {
+    while (results.firstChild) { results.removeChild(results.firstChild) }
+    const q = readElement(query)
+    const f = readDate(from)
+    const t = readDate(to)
+    const b = readElement(bucket) * 24 * 60 * 60
+    urlParams.set('query', q)
+    urlParams.set('from', readElement(from))
+    urlParams.set('to', readElement(to))
+    urlParams.set('bucket', readElement(bucket))
+    window.history.replaceState({}, '', '?' + urlParams)
+    let maxVal = 0
+    const layout = (newVal) => {
+      if (newVal > maxVal) maxVal = newVal;
+      document.querySelectorAll('.bar').forEach(item => {
+        item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%'
+      })
+    }
+    for (let i = f; i < t; i += b) {
+        q.split(',').forEach((q, qI) => {
+          const bar = document.createElement('div')
+          bar.classList.add('bar', 'c' + (qI % 5))
+          results.appendChild(bar)
+          const apiURL = `https://hn.algolia.com/api/v1/search_by_date?tags=comment&numericFilters=created_at_i%3E${i},created_at_i%3C${i + b}&query=${encodeURIComponent(q)}&typoTolerance=min`
+          const prodURL = `https://hn.algolia.com/?dateRange=custom&dateStart=${i}&dateEnd=${i + b}&page=0&prefix=false&query=${encodeURIComponent(q)}&sort=byDate&type=comment`
+          fetch(apiURL).then(response => response.json()).then(response => {
+              bar.setAttribute('x-result-count', response.nbHits)
+              bar.title = `${response.nbHits} hits for ${q} from ${new Date(i * 1000).toLocaleDateString()} to ${new Date((i + b) * 1000).toLocaleDateString()}`
+              bar.onclick = (e) => e.altKey ? open(apiURL) : open(prodURL)
+              layout(response.nbHits)
+            })})
+        const gap = document.createElement('div')
+        gap.className = 'gap'
+        results.appendChild(gap)
+    }
+  }
+  if (query.value || from.value || to.value || bucket.value) { submit() }
+</script>
+</html>
