@@ -40,36 +40,43 @@
 </body>
 <script>
   document.querySelectorAll('input[type="text"]').forEach(e => e.onkeyup = (e) => e.keyCode === 13 && submit())
+  
   const urlParams = new URL(window.location).searchParams
   const results = document.getElementById('results')
   const query = document.getElementById('query')
   const from = document.getElementById('from')
   const to = document.getElementById('to')
   const bucket = document.getElementById('bucket')
+  
   query.value = urlParams.get('query')
   from.value = urlParams.get('from')
   to.value = urlParams.get('to')
   bucket.value = urlParams.get('bucket')
+  
   const readElement = (element) => element.value || element.placeholder
   const readDate = (element) => +new Date(readElement(element)) / 1000
+  
   const submit = () => {
     while (results.firstChild) { results.removeChild(results.firstChild) }
     const q = readElement(query)
     const f = readDate(from)
     const t = readDate(to)
     const b = readElement(bucket) * 24 * 60 * 60
+    
     urlParams.set('query', q)
     urlParams.set('from', readElement(from))
     urlParams.set('to', readElement(to))
     urlParams.set('bucket', readElement(bucket))
     window.history.replaceState({}, '', '?' + urlParams)
+    
     let maxVal = 0
     const layout = (newVal) => {
-      if (newVal > maxVal) maxVal = newVal;
+      if (newVal > maxVal) maxVal = newVal
       document.querySelectorAll('.bar').forEach(item => {
         item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%'
       })
     }
+    
     for (let i = f; i < t; i += b) {
         q.split(',').forEach((q, qI) => {
           const bar = document.createElement('div')
