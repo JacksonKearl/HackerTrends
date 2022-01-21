@@ -75,10 +75,13 @@
       document.querySelectorAll('.bar').forEach(item => {
         item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%' } ) }
 
-    for (let i = t - b; i >= f; i -= b) {
-        q.split(',').reverse().forEach((q, qI) => {
+    const qs = q.split(',')
+    const numQs = qs.length()
+    for (let i = t - b; i >= f - b; i -= b) {
+        qs.reverse().forEach((q, qrI) => {
           const bar = document.createElement('div')
-          bar.classList.add('bar', 'c' + (qI % 6))
+          const colorIndex = (numQs - qrI - 1) % 6
+          bar.classList.add('bar', 'c' + colorIndex)
           results.appendChild(bar)
           const apiURL = `https://hn.algolia.com/api/v1/search_by_date?tags=comment&numericFilters=created_at_i%3E${i},created_at_i%3C${i + b}&query=${encodeURIComponent(q)}&typoTolerance=min`
           const prodURL = `https://hn.algolia.com/?dateRange=custom&dateStart=${i}&dateEnd=${i + b}&page=0&prefix=false&query=${encodeURIComponent(q)}&sort=byDate&type=comment`
