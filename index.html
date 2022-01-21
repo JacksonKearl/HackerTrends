@@ -20,11 +20,12 @@
   .c2 { background-color: indianred; }
   .c3 { background-color: thistle; }
   .c4 { background-color: peru; }
+  .c5 { background-color: navajowhite; }
 </style>
 <body>
   <div id="queryContainer">
     Query: <input type="text" placeholder="strawman" id="query" />
-    (<span class="c0">comma</span>, <span class="c1">separated</span>, <span class="c2">values</span>, <span class="c3">are</span>, <span class="c4">color-coded</span>) <br />
+    (<span class="c0">comma</span>, <span class="c1">separated</span>, <span class="c2">values</span>, <span class="c3">are</span>, <span class="c4">color</span>-<span class="c5">coded</span>) <br />
     From: <input type="text" placeholder="2006" id="from" />
     To: <input type="text" placeholder="now" id="to" />
     (<code>new Date($0)</code>) <br />
@@ -77,7 +78,7 @@
     for (let i = t - b; i >= f; i -= b) {
         q.split(',').reverse().forEach((q, qI) => {
           const bar = document.createElement('div')
-          bar.classList.add('bar', 'c' + (qI % 5))
+          bar.classList.add('bar', 'c' + (qI % 6))
           results.appendChild(bar)
           const apiURL = `https://hn.algolia.com/api/v1/search_by_date?tags=comment&numericFilters=created_at_i%3E${i},created_at_i%3C${i + b}&query=${encodeURIComponent(q)}&typoTolerance=min`
           const prodURL = `https://hn.algolia.com/?dateRange=custom&dateStart=${i}&dateEnd=${i + b}&page=0&prefix=false&query=${encodeURIComponent(q)}&sort=byDate&type=comment`
