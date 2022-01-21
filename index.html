@@ -30,7 +30,9 @@
     To: <input type="text" placeholder="now" id="to" />
     (<code>new Date($0)</code>) <br />
     Bucket: <input type="text" placeholder="90" id="bucket" /> (# days) <br />
-    <input type="submit" id="send" onclick="submit()" />
+    <input type="radio" id="comments" checked name="scope"><label for="comments">Comments</label>
+    <input type="radio" id="stories" name="scope"><label for="stories">Stories</label><br />
+    <input type="submit" id="send" onclick="submit()" /> Max: <span id="max"></span><br />
   </div><hr />
   <div id="results"></div><hr />
   <div id="about">Powered by Agolia's <a href="https://hn.algolia.com/api">Hacker News Search API</a>. View <a href="https://github.com/JacksonKearl/HackerTrends">Source</a>. Result counts different from the linked page? Use Alt+Click to see the raw API response. "Quotes" may help. </div>
@@ -44,11 +46,14 @@
   const from = document.getElementById('from')
   const to = document.getElementById('to')
   const bucket = document.getElementById('bucket')
+  const max = document.getElementById('max')
+  const stories = document.getElementById('stories')
 
   query.value = urlParams.get('query')
   from.value = urlParams.get('from')
   to.value = urlParams.get('to')
   bucket.value = urlParams.get('bucket')
+  stories.checked = urlParams.get('scope') === 'stories'
 
   const readElement = (element) => element.value || element.placeholder
   const readDate = (element) => {
@@ -62,16 +67,20 @@
     const f = readDate(from)
     const t = readDate(to)
     const b = readElement(bucket) * 24 * 60 * 60
+    const p = document.getElementById('stories').checked
 
     urlParams.set('query', q)
     urlParams.set('from', readElement(from))
     urlParams.set('to', readElement(to))
     urlParams.set('bucket', readElement(bucket))
+    urlParams.set('scope', p ? 'stories' : 'comments')
     window.history.replaceState({}, '', '?' + urlParams)
 
     let maxVal = 0
     const layout = (newVal) => {
-      if (newVal > maxVal) maxVal = newVal
+      if (newVal > maxVal) {
+        maxVal = newVal
+        max.innerText = '' + maxVal }
       document.querySelectorAll('.bar').forEach(item => {
         item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%' } ) }
 
@@ -82,8 +91,8 @@
           const colorIndex = (qs.length - qrI - 1) % 6
           bar.classList.add('bar', 'c' + colorIndex)
           results.appendChild(bar)
-          const apiURL = `https://hn.algolia.com/api/v1/search_by_date?tags=comment&numericFilters=created_at_i%3E${i},created_at_i%3C${i + b}&query=${encodeURIComponent(q)}&typoTolerance=min`
-          const prodURL = `https://hn.algolia.com/?dateRange=custom&dateStart=${i}&dateEnd=${i + b}&page=0&prefix=false&query=${encodeURIComponent(q)}&sort=byDate&type=comment`
+          const apiURL = `https://hn.algolia.com/api/v1/search_by_date?numericFilters=created_at_i%3E${i},created_at_i%3C${i + b}&query=${encodeURIComponent(q)}&typoTolerance=min` + (p ? '&tags=story' : '&tags=comment')
+          const prodURL = `https://hn.algolia.com/?dateRange=custom&dateStart=${i}&dateEnd=${i + b}&page=0&prefix=false&query=${encodeURIComponent(q)}&sort=byDate` + (p ? '' : '&type=comment')
           fetch(apiURL).then(response => response.json()).then(response => {
               bar.setAttribute('x-result-count', response.nbHits)
               bar.title = `${response.nbHits} hits for ${q} from ${new Date(i * 1000).toLocaleDateString()} to ${new Date((i + b) * 1000).toLocaleDateString()}`
