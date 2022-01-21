@@ -24,20 +24,15 @@
 <body>
   <div id="queryContainer">
     Query: <input type="text" placeholder="strawman" id="query" />
-    (<span class="c0">comma</span>, <span class="c1">separated</span>, <span class="c2">values</span>, <span class="c3">are</span>, <span class="c4">color-coded</span>)
-    <br />
+    (<span class="c0">comma</span>, <span class="c1">separated</span>, <span class="c2">values</span>, <span class="c3">are</span>, <span class="c4">color-coded</span>) <br />
     From: <input type="text" placeholder="2006" id="from" />
     To: <input type="text" placeholder="now" id="to" />
-    (<code>new Date($0)</code>)
-    <br />
-    Bucket: <input type="text" placeholder="90" id="bucket" /> (# days)
-    <br />
+    (<code>new Date($0)</code>) <br />
+    Bucket: <input type="text" placeholder="90" id="bucket" /> (# days) <br />
     <input type="submit" id="send" onclick="submit()" />
-  </div>
-  <hr />
-  <div id="results"></div>
-  <hr />
-  <div id="about">Powered by Agolia's <a href="https://hn.algolia.com/api">Hacker News Search API</a>. View <a href="https://github.com/JacksonKearl/HackerTrends">Source</a>. Result counts different from the linked page? Use Alt+Click to see the raw API response. </div>
+  </div><hr />
+  <div id="results"></div><hr />
+  <div id="about">Powered by Agolia's <a href="https://hn.algolia.com/api">Hacker News Search API</a>. View <a href="https://github.com/JacksonKearl/HackerTrends">Source</a>. Result counts different from the linked page? Use Alt+Click to see the raw API response. "Quotes" may help. </div>
 </body>
 <script>
   document.querySelectorAll('input[type="text"]').forEach(e => e.onkeyup = (e) => e.keyCode === 13 && submit())
@@ -58,8 +53,7 @@
   const readDate = (element) => {
     const value = readElement(element)
     if (value === 'now') { return +new Date() / 1000 }
-    return +new Date(readElement(element)) / 1000
-  }
+    return +new Date(readElement(element)) / 1000 }
 
   const submit = () => {
     while (results.firstChild) { results.removeChild(results.firstChild) }
@@ -78,9 +72,7 @@
     const layout = (newVal) => {
       if (newVal > maxVal) maxVal = newVal
       document.querySelectorAll('.bar').forEach(item => {
-        item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%'
-      })
-    }
+        item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%' } ) }
 
     for (let i = t - b; i >= f; i -= b) {
         q.split(',').forEach((q, qI) => {
@@ -93,13 +85,10 @@
               bar.setAttribute('x-result-count', response.nbHits)
               bar.title = `${response.nbHits} hits for ${q} from ${new Date(i * 1000).toLocaleDateString()} to ${new Date((i + b) * 1000).toLocaleDateString()}`
               bar.onclick = (e) => e.altKey ? open(apiURL) : open(prodURL)
-              layout(response.nbHits)
-            })})
+              layout(response.nbHits)})})
         const gap = document.createElement('div')
         gap.className = 'gap'
-        results.appendChild(gap)
-    }
-  }
+        results.appendChild(gap) } }
   if (query.value || from.value || to.value || bucket.value) { submit() }
 </script>
 </html>
