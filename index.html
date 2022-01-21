@@ -39,6 +39,7 @@
 </body>
 <script>
   document.querySelectorAll('input[type="text"]').forEach(e => e.onkeyup = (e) => e.keyCode === 13 && submit())
+  document.querySelectorAll('input[type="radio"]').forEach(e => e.onchange = () => submit())
 
   const urlParams = new URL(window.location).searchParams
   const results = document.getElementById('results')
