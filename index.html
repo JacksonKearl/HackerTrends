@@ -11,7 +11,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { display: flex; height: 100vh; flex-direction: column; }
   hr { width: 100%; }
-  #results { flex-grow: 1; background-color: wheat; display: flex; flex-direction: row; }
+  #results { flex-grow: 1; background-color: wheat; display: flex; flex-direction: row-reverse; }
   .bar { cursor: pointer; width: 50px; height: 0; }
   .gap { width: 10px; }
   .bar:hover { filter: saturate(150%); }
@@ -78,7 +78,7 @@
       })
     }
 
-    for (let i = f; i < t; i += b) {
+    for (let i = t - b; i >= f; i -= b) {
         q.split(',').forEach((q, qI) => {
           const bar = document.createElement('div')
           bar.classList.add('bar', 'c' + (qI % 5))
