@@ -75,9 +75,9 @@
       document.querySelectorAll('.bar').forEach(item => {
         item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%' } ) }
 
-    const qs = q.split(',')
+    const qs = q.split(',').reverse()
     for (let i = t - b; i >= f - b; i -= b) {
-        qs.reverse().forEach((q, qrI) => {
+        qs.forEach((q, qrI) => {
           const bar = document.createElement('div')
           const colorIndex = (qs.length - qrI - 1) % 6
           bar.classList.add('bar', 'c' + colorIndex)
