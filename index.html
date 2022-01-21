@@ -27,7 +27,7 @@
     (<span class="c0">comma</span>, <span class="c1">separated</span>, <span class="c2">values</span>, <span class="c3">are</span>, <span class="c4">color-coded</span>)
     <br />
     From: <input type="text" placeholder="2006" id="from" />
-    To: <input type="text" placeholder="2022" id="to" />
+    To: <input type="text" placeholder="now" id="to" />
     (<code>new Date($0)</code>)
     <br />
     Bucket: <input type="text" placeholder="90" id="bucket" /> (# days)
@@ -55,7 +55,11 @@
   bucket.value = urlParams.get('bucket')
 
   const readElement = (element) => element.value || element.placeholder
-  const readDate = (element) => +new Date(readElement(element)) / 1000
+  const readDate = (element) => {
+    const value = readElement(element)
+    if (value === 'now') { return +new Date() / 1000 }
+    return +new Date(readElement(element)) / 1000
+  }
 
   const submit = () => {
     while (results.firstChild) { results.removeChild(results.firstChild) }

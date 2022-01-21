@@ -1,6 +1,6 @@
 # HackerTrends
 
-Google Trends, but for HN comments, in less than 100 lines of HTML. [Try it now!](https://jacksonkearl.github.io/HackerTrends)
+Google Trends, but for HN comments, in less than 128 lines of HTML. [Try it now!](https://jacksonkearl.github.io/HackerTrends)
 
 Powered by Agolia's [Hacker News Search API](https://hn.algolia.com/api).
 
