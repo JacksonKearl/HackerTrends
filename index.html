@@ -18,8 +18,8 @@
   .c0 { background-color: burlywood; }
   .c1 { background-color: cornflowerblue; }
   .c2 { background-color: indianred; }
-  .c3 { background-color: mediumaquamarine; }
-  .c4 { background-color: saddlebrown; }
+  .c3 { background-color: thistle; }
+  .c4 { background-color: peru; }
 </style>
 <body>
   <div id="queryContainer">
@@ -75,7 +75,7 @@
         item.style.height = (item.getAttribute('x-result-count') / maxVal) * 100 + '%' } ) }
 
     for (let i = t - b; i >= f; i -= b) {
-        q.split(',').forEach((q, qI) => {
+        q.split(',').reverse().forEach((q, qI) => {
           const bar = document.createElement('div')
           bar.classList.add('bar', 'c' + (qI % 5))
           results.appendChild(bar)
